@@ -59,4 +59,7 @@ moveAnimal({ type: 'bird', flyingSpeed: 120 });
 // let userinput =<HTMLInputElement>document.getElementById('inputEl')!;
 let userinput = document.getElementById('inputEl');
 userinput.value = 'bird';
+const errBag = {
+    email: 'Not a valid email'
+};
 //# sourceMappingURL=app.js.map
