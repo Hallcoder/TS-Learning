@@ -27,6 +27,17 @@ function add(a:combinable,b:combinable){
 }
 const result = add('Max','Schwarz');
 result.split(' ')
+
+const fetchedUserData = {
+    id:'u1',
+    name:'Max',
+    job:{title:'CEO',description:'chief executive officer'}
+}
+console.log(fetchedUserData?.job?.title);
+
+const useriinput  = '';
+const storeData =  useriinput ?? 'Default';
+console.log(storeData)
 // type UnknownEmployee = Admin | Employee;
 
 // function printEmployeeInformation(emp: UnknownEmployee){

@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 console.log('inside app ts');
 const e1 = {
     name: 'sd',
@@ -13,6 +14,15 @@ function add(a, b) {
 }
 const result = add('Max', 'Schwarz');
 result.split(' ');
+const fetchedUserData = {
+    id: 'u1',
+    name: 'Max',
+    job: { title: 'CEO', description: 'chief executive officer' }
+};
+console.log((_a = fetchedUserData === null || fetchedUserData === void 0 ? void 0 : fetchedUserData.job) === null || _a === void 0 ? void 0 : _a.title);
+const useriinput = '';
+const storeData = useriinput !== null && useriinput !== void 0 ? useriinput : 'Default';
+console.log(storeData);
 // type UnknownEmployee = Admin | Employee;
 // function printEmployeeInformation(emp: UnknownEmployee){
 //     console.log('Name', emp);
