@@ -56,4 +56,7 @@ function moveAnimal(animal) {
     console.log('Moving at speed: ', speed);
 }
 moveAnimal({ type: 'bird', flyingSpeed: 120 });
+// let userinput =<HTMLInputElement>document.getElementById('inputEl')!;
+let userinput = document.getElementById('inputEl');
+userinput.value = 'bird';
 //# sourceMappingURL=app.js.map

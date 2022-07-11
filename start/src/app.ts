@@ -89,4 +89,8 @@ function moveAnimal(animal: Animal){
      console.log('Moving at speed: ', speed);
 }
 
-moveAnimal({type:'bird',flyingSpeed:120})
+moveAnimal({type:'bird',flyingSpeed:120});
+
+// let userinput =<HTMLInputElement>document.getElementById('inputEl')!;
+let userinput =document.getElementById('inputEl')! as HTMLInputElement;
+userinput.value = 'bird';
