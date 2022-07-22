@@ -9,11 +9,18 @@ function Logger(logString: string) {
 }
 
 function WithTemplate(template: string, hookId: string) {
-  return function (_: Function) {
+  return function (originalConstructor: any): any{
     console.log("rendering template");
-    const hookEl = document.getElementById(hookId);
-    if (hookEl) {
-      hookEl.innerHTML = template;
+    console.log(originalConstructor);
+   // return class to replace original one to add more functionality
+    return class extends originalConstructor{
+        constructor() {
+           super();
+           const hookEl = document.getElementById(hookId);
+           if (hookEl) {
+             hookEl.innerHTML = template;
+           }
+        }
     }
   };
 }
@@ -43,15 +50,14 @@ function Log2(target: any, name:string, descriptor: PropertyDescriptor){
     console.log(target);
     console.log(name);
     console.log(descriptor);
-    
-    
 }
 //method decorator
-function Log3(target:any, name:string | Symbol, descriptor:any){
+function Log3(target:any, name:string | Symbol, descriptor:PropertyDescriptor){
     console.log('method decorator!');
     console.log(target);
     console.log(name);
     console.log(descriptor);
+
 }
 //parameter decorator
 function Log4(target:any, name:string | Symbol, position:number){
@@ -78,3 +84,29 @@ class Product {
     return this._price * (1 * tax);
   }
 }
+const p1 = new Product('Book1',21)
+const p2 = new Product('Book1',21)
+//application of decorators in auto binding instead of manually doing the job of binding
+function AutoBind(_: any, _2:string, descriptor: PropertyDescriptor){
+ const originalMethod = descriptor.value;
+ const adjDescriptor: PropertyDescriptor = {
+    configurable:true,
+    enumerable:true,
+    get() {
+        const boundFunction  = originalMethod.bind(this);
+        return boundFunction;
+    }
+}
+return adjDescriptor;
+}
+class Printer {
+    message = 'This works!';
+    @AutoBind
+    showMessage(){
+        console.log(this.message)
+    }
+}
+const p = new Printer();
+const Button = document.querySelector('button')!;
+Button.addEventListener('click', p.showMessage)
+

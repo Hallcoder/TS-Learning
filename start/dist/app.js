@@ -18,12 +18,19 @@ function Logger(logString) {
     };
 }
 function WithTemplate(template, hookId) {
-    return function (_) {
+    return function (originalConstructor) {
         console.log("rendering template");
-        const hookEl = document.getElementById(hookId);
-        if (hookEl) {
-            hookEl.innerHTML = template;
-        }
+        console.log(originalConstructor);
+        // return class to replace original one to add more functionality
+        return class extends originalConstructor {
+            constructor() {
+                super();
+                const hookEl = document.getElementById(hookId);
+                if (hookEl) {
+                    hookEl.innerHTML = template;
+                }
+            }
+        };
     };
 }
 let Person = class Person {
@@ -89,4 +96,33 @@ __decorate([
     Log3,
     __param(0, Log4)
 ], Product.prototype, "getPriceWithTax", null);
+const p1 = new Product('Book1', 21);
+const p2 = new Product('Book1', 21);
+//application of decorators in auto binding instead of manually doing the job of binding
+function AutoBind(_, _2, descriptor) {
+    const originalMethod = descriptor.value;
+    const adjDescriptor = {
+        configurable: true,
+        enumerable: true,
+        get() {
+            const boundFunction = originalMethod.bind(this);
+            return boundFunction;
+        }
+    };
+    return adjDescriptor;
+}
+class Printer {
+    constructor() {
+        this.message = 'This works!';
+    }
+    showMessage() {
+        console.log(this.message);
+    }
+}
+__decorate([
+    AutoBind
+], Printer.prototype, "showMessage", null);
+const p = new Printer();
+const Button = document.querySelector('button');
+Button.addEventListener('click', p.showMessage);
 //# sourceMappingURL=app.js.map
