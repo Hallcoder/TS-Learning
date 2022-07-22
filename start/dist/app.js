@@ -1,15 +1,38 @@
 "use strict";
-const names = ['Max', 'Manuel'];
-const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve('This is done');
-    }, 2000);
-});
-//generic function
-function merge(objA, objB) {
-    return Object.assign(objA, objB);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+//decorator is a function you apply to an object in a certain way
+//decorators take parameters , for class it takes one which is target
+//decorator factories help us configure what our decorators do and how they behave
+function Logger(logString) {
+    return function (constructor) {
+        console.log(logString);
+        console.log(constructor);
+    };
 }
-console.log(merge({ name: 'Max' }, { age: 15 }));
-const mergedObj = merge({ name: 'Max' }, { age: 15 });
-mergedObj.age;
+function WithTemplate(template, hookId) {
+    return function (_) {
+        console.log('rendering template');
+        const hookEl = document.getElementById(hookId);
+        if (hookEl) {
+            hookEl.innerHTML = template;
+        }
+    };
+}
+let Person = class Person {
+    constructor() {
+        this.name = 'Max';
+        console.log('Creating person object...');
+    }
+};
+Person = __decorate([
+    Logger('Logging - person'),
+    WithTemplate('<h1>My Person object</h1>', 'app')
+], Person);
+const per = new Person();
+console.log(per);
 //# sourceMappingURL=app.js.map
