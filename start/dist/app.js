@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 //decorator is a function you apply to an object in a certain way
 //decorators take parameters , for class it takes one which is target
 //decorator factories help us configure what our decorators do and how they behave
@@ -16,7 +19,7 @@ function Logger(logString) {
 }
 function WithTemplate(template, hookId) {
     return function (_) {
-        console.log('rendering template');
+        console.log("rendering template");
         const hookEl = document.getElementById(hookId);
         if (hookEl) {
             hookEl.innerHTML = template;
@@ -25,14 +28,65 @@ function WithTemplate(template, hookId) {
 }
 let Person = class Person {
     constructor() {
-        this.name = 'Max';
-        console.log('Creating person object...');
+        this.name = "Max";
+        console.log("Creating person object...");
     }
 };
 Person = __decorate([
-    Logger('Logging - person'),
-    WithTemplate('<h1>My Person object</h1>', 'app')
+    Logger("Logging - person"),
+    WithTemplate("<h1>My Person object</h1>", "app")
 ], Person);
 const per = new Person();
 console.log(per);
+// ---
+function Log(target, propertyName) {
+    console.log('Property decorator!');
+    console.log(target, " ", propertyName);
+}
+//accessor decorator
+function Log2(target, name, descriptor) {
+    console.log('Accessor decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+//method decorator
+function Log3(target, name, descriptor) {
+    console.log('method decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+//parameter decorator
+function Log4(target, name, position) {
+    console.log('Parameter decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(position);
+}
+class Product {
+    constructor(t, p) {
+        this.title = t;
+        this._price = p;
+    }
+    set price(val) {
+        if (val > 0)
+            this._price = val;
+        else
+            throw new Error("use a positive value");
+    }
+    getPriceWithTax(tax) {
+        return this._price * (1 * tax);
+    }
+}
+__decorate([
+    Log
+], Product.prototype, "title", void 0);
+__decorate([
+    Log2
+], Product.prototype, "price", null);
+__decorate([
+    Log3,
+    __param(0, Log4)
+], Product.prototype, "getPriceWithTax", null);
 //# sourceMappingURL=app.js.map
