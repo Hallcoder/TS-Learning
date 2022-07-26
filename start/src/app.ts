@@ -66,6 +66,7 @@ function Log4(target:any, name:string | Symbol, position:number){
     console.log(name);
     console.log(position);
 }
+
 class Product {
   @Log
   title: string;
@@ -84,6 +85,7 @@ class Product {
     return this._price * (1 * tax);
   }
 }
+
 const p1 = new Product('Book1',21)
 const p2 = new Product('Book1',21)
 //application of decorators in auto binding instead of manually doing the job of binding
@@ -99,6 +101,7 @@ function AutoBind(_: any, _2:string, descriptor: PropertyDescriptor){
 }
 return adjDescriptor;
 }
+
 class Printer {
     message = 'This works!';
     @AutoBind
@@ -106,12 +109,50 @@ class Printer {
         console.log(this.message)
     }
 }
+
 const p = new Printer();
 const Button = document.querySelector('button')!;
 Button.addEventListener('click', p.showMessage)
 
+interface ValidatorConfig{
+  [property:string]: {
+    [validatableProp:string]:string[] //['required','positive']
+  }
+}
+const registeredValidators: ValidatorConfig = {};
+
+function Required(target:any, propName: string){
+  registeredValidators[target.constructor.name] = {
+    [propName]:['required']
+  }
+}
+
+function PositiveNumber(target:any, propName: string){
+  registeredValidators[target.constructor.name] = {
+    [propName]:['positive']
+  }
+}
+
+function validate(obj:any):Boolean{
+  const objValidatorConfig = registeredValidators[obj.constructor.name];
+  if(!objValidatorConfig){
+    return true
+  }
+  for(const prop in objValidatorConfig){
+    for(const validator of objValidatorConfig[prop]){
+      switch(validator){
+        case 'required':
+          return !!obj[prop];
+      }
+    }
+  }
+  return true
+}
+
 class Course {
-    title:string; 
+    @Required
+    title:string;
+    @PositiveNumber 
     price:number;
     constructor(t:string,p:number){
         this.title = t;
@@ -126,7 +167,8 @@ form.addEventListener('submit',(e:any) => {
     const priceEl = document.getElementById('price') as HTMLInputElement;
     const title = titleEl.value;
     const price = +priceEl.value;
-
+    
+    if(!validate())
     const createdCourse = new Course(title,price);
     console.log(createdCourse)
 })
