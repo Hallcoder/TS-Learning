@@ -121,14 +121,16 @@ interface ValidatorConfig{
 }
 const registeredValidators: ValidatorConfig = {};
 
-function Required(target:any, propName: string){
+function required(target:any, propName: string){
   registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
     [propName]:['required']
   }
 }
 
 function PositiveNumber(target:any, propName: string){
   registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
     [propName]:['positive']
   }
 }
@@ -138,19 +140,24 @@ function validate(obj:any):Boolean{
   if(!objValidatorConfig){
     return true
   }
+  var isValid = true;
   for(const prop in objValidatorConfig){
     for(const validator of objValidatorConfig[prop]){
       switch(validator){
         case 'required':
-          return !!obj[prop];
+         isValid = isValid&& !!obj[prop];
+         break;
+        case 'positive':
+          isValid = isValid&& obj[prop]>0;
+          break;
       }
     }
   }
-  return true
+  return isValid
 }
 
 class Course {
-    @Required
+    @required
     title:string;
     @PositiveNumber 
     price:number;
@@ -167,8 +174,15 @@ form.addEventListener('submit',(e:any) => {
     const priceEl = document.getElementById('price') as HTMLInputElement;
     const title = titleEl.value;
     const price = +priceEl.value;
-    
-    if(!validate())
     const createdCourse = new Course(title,price);
+    if(!validate(createdCourse)){
+    let confirmed =  confirm('Invalid course, try again');
+     if(confirmed) {
+      alert('Thank You')
+     }else{
+      alert("you can't cancel this lol")
+     }
+     return;
+    }
     console.log(createdCourse)
 })

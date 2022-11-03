@@ -126,30 +126,31 @@ const p = new Printer();
 const Button = document.querySelector('button');
 Button.addEventListener('click', p.showMessage);
 const registeredValidators = {};
-function Required(target, propName) {
-    registeredValidators[target.constructor.name] = {
-        [propName]: ['required']
-    };
+function required(target, propName) {
+    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ['required'] });
 }
 function PositiveNumber(target, propName) {
-    registeredValidators[target.constructor.name] = {
-        [propName]: ['positive']
-    };
+    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ['positive'] });
 }
 function validate(obj) {
     const objValidatorConfig = registeredValidators[obj.constructor.name];
     if (!objValidatorConfig) {
         return true;
     }
+    var isValid = true;
     for (const prop in objValidatorConfig) {
         for (const validator of objValidatorConfig[prop]) {
             switch (validator) {
                 case 'required':
-                    return !!obj[prop];
+                    isValid = isValid && !!obj[prop];
+                    break;
+                case 'positive':
+                    isValid = isValid && obj[prop] > 0;
+                    break;
             }
         }
     }
-    return true;
+    return isValid;
 }
 class Course {
     constructor(t, p) {
@@ -158,7 +159,7 @@ class Course {
     }
 }
 __decorate([
-    Required
+    required
 ], Course.prototype, "title", void 0);
 __decorate([
     PositiveNumber
@@ -170,8 +171,17 @@ form.addEventListener('submit', (e) => {
     const priceEl = document.getElementById('price');
     const title = titleEl.value;
     const price = +priceEl.value;
-    if (!validate())
-        const createdCourse = new Course(title, price);
+    const createdCourse = new Course(title, price);
+    if (!validate(createdCourse)) {
+        let confirmed = confirm('Invalid course, try again');
+        if (confirmed) {
+            alert('Thank You');
+        }
+        else {
+            alert("you can't cancel this lol");
+        }
+        return;
+    }
     console.log(createdCourse);
 });
 //# sourceMappingURL=app.js.map
